@@ -1,4 +1,4 @@
 class Vehicle < ApplicationRecord
     has_many :waypoints 
-    validates :vehicle_identifier, presence: :true, uniqueness: true
+    validates :vehicle_identifier, uniqueness: true
 end

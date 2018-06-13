@@ -1,4 +1,4 @@
-class Api::V1::Gps::WaypointsController < ApplicationController
+class Api::V1::Gps::WaypointsController < ActionController::API
     before_action :set_vehicle
 
     def show
@@ -10,9 +10,24 @@ class Api::V1::Gps::WaypointsController < ApplicationController
         }
     end
 
+    def create
+        @waypoint = Waypoint.new(waypoint_params)
+        @waypoint.vehicle_id = @vehicle.id
+        if @waypoint.save
+            render plain: :ok, status: 201
+        else
+            render json: { error: command.message },
+            status: command.error_code
+        end       
+    end 
+
     private
 
     def set_vehicle
-        @vehicle = Vehicle.find(params[:id])
+        @vehicle = Vehicle.find_or_create_by(vehicle_identifier: params[:vehicle_identifier])
+    end
+
+    def waypoint_params
+        params.require(:waypoint).permit(:latitude,:longitude,:sent_at,:vehicle_identifier)
     end
 end
