@@ -11,14 +11,8 @@ class Api::V1::Gps::WaypointsController < ActionController::API
     end
 
     def create
-        @waypoint = Waypoint.new(waypoint_params)
-        @waypoint.vehicle_id = @vehicle.id
-        if @waypoint.save
-            render plain: :ok, status: 201
-        else
-            render json: { error: command.message },
-            status: command.error_code
-        end       
+        WaypointJob.perform_later(waypoint_params.to_hash,@vehicle)  
+        render plain: :ok, status: 201
     end 
 
     private
