@@ -1,0 +1,18 @@
+App.waypoint = App.cable.subscriptions.create "WaypointChannel",
+  connected: ->
+    # Called when the subscription is ready for use on the server
+
+  disconnected: ->
+    # Called when the subscription has been terminated by the server
+
+  received: (data) ->
+    # Called when there's incoming data on the websocket for this channel
+      handler = Gmaps.build('Google')
+      handler.buildMap {
+        provider: {}
+        internal: id: 'map'
+      }, ->
+        markers = handler.addMarkers(data['hash'])
+        handler.bounds.extendWith markers
+        handler.fitMapToBounds()
+        return
